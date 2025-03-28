@@ -1,0 +1,951 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Julia - Ajude com Amor</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+        font-family: "Montserrat", sans-serif;
+      }
+
+      body {
+        background-color: #f9f9f9;
+        color: #2a2a2a;
+        line-height: 1.6;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+        padding: 20px;
+      }
+
+      header {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-bottom: 20px;
+        padding-bottom: 10px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .logo {
+        font-size: 24px;
+        font-weight: bold;
+        color: #365899;
+      }
+
+      .main-content {
+        background-color: #fff;
+        border-radius: 10px;
+        box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+        overflow: hidden;
+        margin-bottom: 20px;
+      }
+
+      .image-container {
+        position: relative;
+      }
+
+      .image-container img {
+        width: 100%;
+        height: auto;
+        display: block;
+      }
+
+      .image-container .heart-icon {
+        position: absolute;
+        top: 10px;
+        right: 10px;
+        color: #cf2e2e;
+        font-size: 24px;
+      }
+
+      .info-bar {
+        display: flex;
+        justify-content: space-between;
+        padding: 15px;
+        background-color: #f9f9f9;
+        border-bottom: 1px solid #eee;
+      }
+
+      .hearts-count {
+        display: flex;
+        align-items: center;
+        color: #444;
+        font-size: 14px;
+      }
+
+      .progress-container {
+        padding: 20px;
+        border-bottom: 1px solid #eee;
+      }
+
+      .progress-bar {
+        width: 100%;
+        height: 20px;
+        background-color: #e0e0e0;
+        border-radius: 10px;
+        overflow: hidden;
+        margin-bottom: 10px;
+      }
+
+      .progress {
+        width: 68%;
+        height: 100%;
+        background-color: #6ec1e4;
+        border-radius: 10px;
+        transition: width 1.5s ease-in-out;
+      }
+
+      .progress-info {
+        display: flex;
+        justify-content: space-between;
+        font-size: 14px;
+      }
+
+      .tab-container {
+        display: flex;
+        border-bottom: 1px solid #eee;
+      }
+
+      .tab {
+        padding: 10px 20px;
+        cursor: pointer;
+        color: #666;
+        font-weight: 600;
+        font-size: 14px;
+      }
+
+      .tab.active {
+        color: #365899;
+        border-bottom: 2px solid #365899;
+      }
+
+      .content {
+        padding: 20px;
+      }
+
+      .date {
+        font-size: 14px;
+        color: #666;
+        margin-bottom: 15px;
+      }
+
+      .about-text {
+        margin-bottom: 20px;
+        font-size: 15px;
+        line-height: 1.6;
+      }
+
+      .highlight {
+        font-weight: bold;
+        color: #333;
+      }
+
+      .donate-button {
+        display: block;
+        width: 100%;
+        padding: 15px;
+        background-color: #6ec1e4;
+        color: white;
+        text-align: center;
+        border: none;
+        border-radius: 5px;
+        font-size: 16px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        margin: 20px 0;
+        transition: background-color 0.3s;
+      }
+
+      .donate-button:hover {
+        background-color: #5aa8c7;
+      }
+
+      .sticky-footer {
+        position: fixed;
+        bottom: 0;
+        left: 0;
+        right: 0;
+        background-color: white;
+        box-shadow: 0 -2px 10px rgba(0, 0, 0, 0.1);
+        padding: 15px;
+        display: none;
+      }
+
+      @media (max-width: 768px) {
+        .sticky-footer {
+          display: block;
+        }
+
+        .container {
+          padding-bottom: 80px;
+        }
+      }
+
+      /* Modal Styles */
+      .modal {
+        display: none;
+        position: fixed;
+        z-index: 1000;
+        left: 0;
+        top: 0;
+        width: 100%;
+        height: 100%;
+        background-color: rgba(0, 0, 0, 0.5);
+        overflow: auto;
+      }
+
+      .modal-content {
+        background-color: #fff;
+        margin: 10% auto;
+        padding: 30px;
+        border-radius: 10px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.2);
+        width: 90%;
+        max-width: 600px;
+        position: relative;
+      }
+
+      .close-modal {
+        position: absolute;
+        top: 10px;
+        right: 15px;
+        color: #aaa;
+        font-size: 28px;
+        font-weight: bold;
+        cursor: pointer;
+      }
+
+      .close-modal:hover {
+        color: #333;
+      }
+
+      .modal-title {
+        font-size: 22px;
+        margin-bottom: 20px;
+        color: #365899;
+        text-align: center;
+        font-weight: 600;
+      }
+
+      .modal-subtitle {
+        font-size: 16px;
+        color: #666;
+        text-align: center;
+        margin-bottom: 30px;
+      }
+
+      .donation-options {
+        display: grid;
+        grid-template-columns: repeat(3, 1fr);
+        gap: 15px;
+        margin-bottom: 25px;
+      }
+
+      @media (max-width: 600px) {
+        .donation-options {
+          grid-template-columns: repeat(2, 1fr);
+        }
+      }
+
+      .donation-option {
+        padding: 18px 12px;
+        border: 2px solid #e0e0e0;
+        border-radius: 8px;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+      }
+
+      .donation-option:hover {
+        border-color: #6ec1e4;
+        background-color: #f5f9fb;
+      }
+
+      .donation-option.selected {
+        border-color: #6ec1e4;
+        background-color: #f5f9fb;
+      }
+
+      .donation-value {
+        font-size: 20px;
+        font-weight: bold;
+        color: #333;
+      }
+
+      .donation-description {
+        font-size: 13px;
+        color: #666;
+        margin-top: 5px;
+      }
+
+      .custom-value {
+        margin-top: 25px;
+        padding: 0 5px;
+      }
+
+      .custom-value-label {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #333;
+      }
+
+      .custom-value input {
+        width: 100%;
+        padding: 15px;
+        border: 2px solid #e0e0e0;
+        border-radius: 5px;
+        font-size: 16px;
+        margin-bottom: 25px;
+      }
+
+      .custom-value input:focus {
+        border-color: #6ec1e4;
+        outline: none;
+      }
+
+      .proceed-button {
+        display: block;
+        width: 100%;
+        padding: 18px;
+        background-color: #6ec1e4;
+        color: white;
+        text-align: center;
+        border: none;
+        border-radius: 5px;
+        font-size: 18px;
+        font-weight: bold;
+        cursor: pointer;
+        text-decoration: none;
+        transition: background-color 0.3s;
+      }
+
+      .proceed-button:hover {
+        background-color: #5aa8c7;
+      }
+
+      .modal-footer {
+        margin-top: 20px;
+        text-align: center;
+        font-size: 13px;
+        color: #666;
+      }
+
+      .modal-footer img {
+        max-height: 30px;
+        margin: 10px 5px 0;
+      }
+
+      /* Facebook Comments Styles */
+      .facebook-comments {
+        margin-top: 40px;
+        border-top: 1px solid #e0e0e0;
+        padding-top: 20px;
+      }
+
+      .comments-title {
+        font-size: 16px;
+        font-weight: 600;
+        margin-bottom: 10px;
+        color: #444;
+      }
+
+      .comment-divider {
+        height: 1px;
+        background-color: #e0e0e0;
+        margin-bottom: 20px;
+      }
+
+      .comment {
+        margin-bottom: 20px;
+        padding-bottom: 20px;
+        border-bottom: 1px solid #f0f0f0;
+      }
+
+      .comment-content {
+        display: flex;
+        margin-bottom: 8px;
+      }
+
+      .comment-avatar {
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        overflow: hidden;
+        margin-right: 10px;
+        flex-shrink: 0;
+      }
+
+      .comment-avatar img {
+        width: 100%;
+        height: 100%;
+        object-fit: cover;
+      }
+
+      .comment-details {
+        flex-grow: 1;
+      }
+
+      .comment-name {
+        font-weight: bold;
+        color: #365899;
+        font-size: 14px;
+        margin-bottom: 3px;
+      }
+
+      .comment-text {
+        font-size: 14px;
+        color: #333;
+        line-height: 1.4;
+      }
+
+      .comment-footer {
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        margin-left: 60px;
+      }
+
+      .comment-actions {
+        font-size: 12px;
+        color: #666;
+      }
+
+      .comment-likes {
+        display: flex;
+        align-items: center;
+      }
+
+      .comment-likes img.reaction-icon {
+        width: 20px;
+        height: 20px;
+        margin-right: 3px;
+      }
+
+      .comment-likes span {
+        font-size: 13px;
+        color: #666;
+        margin-left: 3px;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <header>
+        <div class="logo">Ajude com Amor</div>
+      </header>
+
+      <div class="main-content">
+        <div class="image-container">
+          <img src="images/julia.jpg" alt="Julia" />
+          <div class="heart-icon">❤️</div>
+        </div>
+
+        <div class="info-bar">
+          <div class="hearts-count">783 corações recebidos 💚</div>
+        </div>
+
+        <div class="progress-container">
+          <div class="progress-bar">
+            <div class="progress"></div>
+          </div>
+          <div class="progress-info">
+            <div>
+              <div>Arrecadado:</div>
+              <div><strong>R$ 164.992,10</strong></div>
+            </div>
+            <div>
+              <div>Meta</div>
+              <div><strong>R$ 300.000,00</strong></div>
+            </div>
+          </div>
+          <div style="text-align: center; margin-top: 10px; color: #6ec1e4">
+            ☘️ VOCÊ E A VAQUINHA CONCORREM A R$ 15 MIL ☘️
+          </div>
+        </div>
+
+        <div class="tab-container">
+          <div class="tab active">Sobre</div>
+          <div class="tab">Novidades</div>
+          <div class="tab">Quem ajudou</div>
+        </div>
+
+        <div class="content">
+          <div class="date"><b>Vaquinha criada em: </b>17/03/2025</div>
+
+          <div class="about-text">
+            O pequeno Kaleb tem apenas 2 aninhos, mas já enfrentou mais desafios
+            do que muitos adultos em uma vida inteira.
+
+            <p>
+              Ele nasceu com uma doença rara e devastadora chamada Doença de
+              Inclusão das Microvilosidades, uma condição genética que impede
+              seu intestino de absorver nutrientes.
+            </p>
+
+            <p>
+              Isso significa que, mesmo se alimentando, seu corpinho não
+              consegue aproveitar nada do que ele ingere. O que para qualquer
+              criança é algo simples – como beber um suco ou comer uma papinha –
+              para o Kaleb é impossível sem intervenção médica.
+            </p>
+          </div>
+
+          <button class="donate-button" id="openDonateModal">
+            QUERO AJUDAR
+          </button>
+
+          <div class="about-text">
+            <p>
+              <strong
+                >💔 Para sobreviver, ele depende 100% de nutrição
+                parenteral,</strong
+              >
+              recebida diretamente na veia. Mas esse tratamento é extremamente
+              caro e exige cuidados intensivos para evitar infecções e
+              complicações.
+            </p>
+
+            <p>
+              No Brasil, há menos de 10 casos vivos dessa doença. Os médicos
+              foram claros: sem um tratamento contínuo e especializado, Kaleb
+              não vai resistir.
+            </p>
+
+            <p>
+              💔 O tempo está contra nós. Cada dia sem os insumos certos é um
+              risco enorme para a vida do Kaleb.
+            </p>
+
+            <p>
+              Os remédios, os suplementos especiais, os acessos venosos, as
+              internações frequentes… tudo tem um custo altíssimo. E sua
+              família, sozinha, já não consegue mais bancar tudo o que ele
+              precisa.
+            </p>
+
+            <p>
+              A única chance do Kaleb ter mais qualidade de vida, ganhar peso e
+              continuar lutando é garantir esse tratamento o mais rápido
+              possível. Mas, sem ajuda, isso não será possível.
+            </p>
+
+            <p>
+              Kaleb é um guerreirinho. Ele ainda tem muito o que viver. Quer
+              poder brincar, rir, correr como qualquer outra criança de sua
+              idade. Mas, para isso, ele precisa de você agora.
+            </p>
+
+            <p>
+              👉
+              <strong
+                >Clique no botão abaixo e ajude o Kaleb a continuar
+                lutando.</strong
+              >
+            </p>
+          </div>
+
+          <button class="donate-button" id="openDonateModal2">
+            DOE E CONCORRA
+          </button>
+
+          <!-- Instruções de doação -->
+          <div class="about-text" style="margin-top: 30px">
+            <p>Ajudar o Kaleb é simples:</p>
+            <p>
+              ✔️ Clique no botão <strong>"Doe e Concorra"</strong>.<br />
+              ✔️ Escolha o valor que deseja doar.<br />
+              ✔️ Você será direcionado para a próxima etapa, onde poderá efetuar
+              a doação via PIX.
+            </p>
+            <p>
+              Cada doação, por menor que seja, faz uma grande diferença. Todo o
+              valor arrecadado será usado para o tratamento e os cuidados
+              diários do Kaleb.
+            </p>
+          </div>
+
+          <!-- Seção de comentários do Facebook -->
+          <div class="facebook-comments">
+            <h3 class="comments-title">11 Comentários recentes</h3>
+            <div class="comment-divider"></div>
+
+            <!-- Comentário 1 -->
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-avatar">
+                  <img src="images/3.jpg" alt="Ana Clara" />
+                </div>
+                <div class="comment-details">
+                  <div class="comment-name">Ana Clara</div>
+                  <div class="comment-text">
+                    Eu ajudei com 150 reais para ajudar, dá dó no coração ver
+                    tanta dor que essas pessoas passam
+                  </div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="comment-actions">Responder · Curtir · 32 min</div>
+                <div class="comment-likes">
+                  <img
+                    src="images/facebook-like-icon-png-10-removebg-preview.png"
+                    alt="Love"
+                    class="reaction-icon"
+                  />
+                  <img
+                    src="images/65414-button-computer-facebook-like-icons-free-clipart-hq-1.png"
+                    alt="Like"
+                    class="reaction-icon"
+                  />
+                  <span>42</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comentário 2 -->
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-avatar">
+                  <img src="images/8.jpg" alt="Letícia Maria" />
+                </div>
+                <div class="comment-details">
+                  <div class="comment-name">Letícia Maria</div>
+                  <div class="comment-text">
+                    Compartilhei com todas minha familia todas ajudaram!!
+                  </div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="comment-actions">Responder · Curtir · 14 min</div>
+                <div class="comment-likes">
+                  <img
+                    src="images/facebook-like-icon-png-10-removebg-preview.png"
+                    alt="Love"
+                    class="reaction-icon"
+                  />
+                  <img
+                    src="images/65414-button-computer-facebook-like-icons-free-clipart-hq-1.png"
+                    alt="Like"
+                    class="reaction-icon"
+                  />
+                  <span>44</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comentário 3 -->
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-avatar">
+                  <img src="images/7.jpg" alt="Gabriela Oliveira" />
+                </div>
+                <div class="comment-details">
+                  <div class="comment-name">Gabriela Oliveira</div>
+                  <div class="comment-text">
+                    Aqui eu ajudei com 50 reias queria ter doar um pouco mais.
+                  </div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="comment-actions">Responder · Curtir · 6 min</div>
+                <div class="comment-likes">
+                  <img
+                    src="images/facebook-like-icon-png-10-removebg-preview.png"
+                    alt="Love"
+                    class="reaction-icon"
+                  />
+                  <img
+                    src="images/65414-button-computer-facebook-like-icons-free-clipart-hq-1.png"
+                    alt="Like"
+                    class="reaction-icon"
+                  />
+                  <span>16</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comentário 4 -->
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-avatar">
+                  <img src="images/8.jpg" alt="Letícia Maria" />
+                </div>
+                <div class="comment-details">
+                  <div class="comment-name">Letícia Maria</div>
+                  <div class="comment-text">
+                    Acho que se todo mundo doar um pouco ajudará muito
+                  </div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="comment-actions">Responder · Curtir · 2 min</div>
+                <div class="comment-likes">
+                  <img
+                    src="images/facebook-like-icon-png-10-removebg-preview.png"
+                    alt="Love"
+                    class="reaction-icon"
+                  />
+                  <img
+                    src="images/65414-button-computer-facebook-like-icons-free-clipart-hq-1.png"
+                    alt="Like"
+                    class="reaction-icon"
+                  />
+                  <span>09</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comentário 5 -->
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-avatar">
+                  <img src="images/6.jpg" alt="Carolina Santos" />
+                </div>
+                <div class="comment-details">
+                  <div class="comment-name">Carolina Santos</div>
+                  <div class="comment-text">
+                    DEUS ABENÇÕE ESSA CRIANÇA FIZ MINHA COLABORAÇÃO TAMBÉM.
+                  </div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="comment-actions">Responder · Curtir · 21 min</div>
+                <div class="comment-likes">
+                  <img
+                    src="images/facebook-like-icon-png-10-removebg-preview.png"
+                    alt="Love"
+                    class="reaction-icon"
+                  />
+                  <img
+                    src="images/65414-button-computer-facebook-like-icons-free-clipart-hq-1.png"
+                    alt="Like"
+                    class="reaction-icon"
+                  />
+                  <span>51</span>
+                </div>
+              </div>
+            </div>
+
+            <!-- Comentário 6 -->
+            <div class="comment">
+              <div class="comment-content">
+                <div class="comment-avatar">
+                  <img src="images/4.jpg" alt="Fernanda Oliveira" />
+                </div>
+                <div class="comment-details">
+                  <div class="comment-name">Fernanda Oliveira</div>
+                  <div class="comment-text">
+                    Amém irmã também ajudei com 75 reais para essa familia.
+                  </div>
+                </div>
+              </div>
+              <div class="comment-footer">
+                <div class="comment-actions">Responder · Curtir · 11 min</div>
+                <div class="comment-likes">
+                  <img
+                    src="images/facebook-like-icon-png-10-removebg-preview.png"
+                    alt="Love"
+                    class="reaction-icon"
+                  />
+                  <img
+                    src="images/65414-button-computer-facebook-like-icons-free-clipart-hq-1.png"
+                    alt="Like"
+                    class="reaction-icon"
+                  />
+                  <span>58</span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="sticky-footer">
+      <div class="progress-bar">
+        <div class="progress"></div>
+      </div>
+      <div
+        style="
+          display: flex;
+          justify-content: space-between;
+          margin-bottom: 10px;
+        "
+      >
+        <div>
+          <div>Arrecadado:</div>
+          <div><strong>R$ 164.992,10</strong></div>
+        </div>
+        <div>
+          <div>Meta</div>
+          <div><strong>R$ 300.000,00</strong></div>
+        </div>
+      </div>
+      <button class="donate-button" id="openDonateModal3" style="margin: 0">
+        QUERO AJUDAR
+      </button>
+    </div>
+
+    <!-- Modal de Doação -->
+    <div id="donationModal" class="modal">
+      <div class="modal-content">
+        <span class="close-modal">&times;</span>
+        <h2 class="modal-title">Escolha um valor para doar</h2>
+        <p class="modal-subtitle">
+          Você está ajudando o tratamento de Kaleb. Sua contribuição é muito
+          importante!
+        </p>
+
+        <div class="donation-options">
+          <div class="donation-option" data-value="30">
+            <div class="donation-value">R$ 30</div>
+          </div>
+          <div class="donation-option" data-value="40">
+            <div class="donation-value">R$ 40</div>
+          </div>
+          <div class="donation-option" data-value="50">
+            <div class="donation-value">R$ 50</div>
+          </div>
+          <div class="donation-option" data-value="70">
+            <div class="donation-value">R$ 70</div>
+          </div>
+          <div class="donation-option" data-value="100">
+            <div class="donation-value">R$ 100</div>
+          </div>
+          <div class="donation-option" data-value="150">
+            <div class="donation-value">R$ 150</div>
+          </div>
+          <div class="donation-option" data-value="200">
+            <div class="donation-value">R$ 200</div>
+          </div>
+          <div class="donation-option" data-value="300">
+            <div class="donation-value">R$ 300</div>
+          </div>
+          <div class="donation-option" data-value="500">
+            <div class="donation-value">R$ 500</div>
+          </div>
+          <div class="donation-option" data-value="1000">
+            <div class="donation-value">R$ 1.000</div>
+          </div>
+        </div>
+
+        <div class="custom-value">
+          <div class="custom-value-label">Outro valor:</div>
+          <input
+            type="number"
+            id="customValue"
+            placeholder="Digite outro valor (R$)"
+            min="10"
+          />
+        </div>
+
+        <button class="proceed-button" id="proceedToDonate">CONTINUAR</button>
+
+        <div class="modal-footer">Pagamento 100% seguro</div>
+      </div>
+    </div>
+
+    <script>
+      // Simple tab functionality
+      document.addEventListener("DOMContentLoaded", function () {
+        const tabs = document.querySelectorAll(".tab");
+        const modal = document.getElementById("donationModal");
+        const donateButtons = document.querySelectorAll(
+          "#openDonateModal, #openDonateModal2, #openDonateModal3"
+        );
+        const closeModal = document.querySelector(".close-modal");
+        const donationOptions = document.querySelectorAll(".donation-option");
+        const customValue = document.getElementById("customValue");
+        const proceedButton = document.getElementById("proceedToDonate");
+
+        let selectedValue = 0;
+
+        tabs.forEach((tab) => {
+          tab.addEventListener("click", () => {
+            tabs.forEach((t) => t.classList.remove("active"));
+            tab.classList.add("active");
+          });
+        });
+
+        // Open modal
+        donateButtons.forEach((button) => {
+          button.addEventListener("click", function () {
+            modal.style.display = "block";
+          });
+        });
+
+        // Close modal
+        closeModal.addEventListener("click", function () {
+          modal.style.display = "none";
+        });
+
+        // When clicking outside the modal
+        window.addEventListener("click", function (event) {
+          if (event.target == modal) {
+            modal.style.display = "none";
+          }
+        });
+
+        // Select donation value
+        donationOptions.forEach((option) => {
+          option.addEventListener("click", function () {
+            donationOptions.forEach((opt) => opt.classList.remove("selected"));
+            this.classList.add("selected");
+            selectedValue = this.getAttribute("data-value");
+            customValue.value = "";
+          });
+        });
+
+        // Custom value
+        customValue.addEventListener("input", function () {
+          if (this.value) {
+            donationOptions.forEach((opt) => opt.classList.remove("selected"));
+            selectedValue = this.value;
+          }
+        });
+
+        // Proceed to payment
+        proceedButton.addEventListener("click", function () {
+          if (selectedValue > 0) {
+            // Salvar o valor selecionado em localStorage para uso posterior
+            localStorage.setItem("donationValue", selectedValue);
+
+            // Capturar todos os parâmetros UTM e outros parâmetros da URL atual
+            const currentUrl = window.location.search;
+            const urlParams = new URLSearchParams(currentUrl);
+
+            // Criar uma nova URL para a página de pagamento com o valor selecionado
+            let redirectUrl = `pagamento/index.html?valor=${selectedValue}`;
+
+            // Adicionar todos os parâmetros UTM e outros parâmetros à URL de redirecionamento
+            urlParams.forEach((value, key) => {
+              // Não adicionar o parâmetro 'valor' novamente caso já exista
+              if (key !== "valor") {
+                redirectUrl += `&${key}=${value}`;
+              }
+            });
+
+            // Redirecionar para a página de pagamento com todos os parâmetros
+            window.location.href = redirectUrl;
+          } else {
+            alert("Por favor, escolha ou digite um valor para doar.");
+          }
+        });
+
+        // Prevent back navigation
+        history.pushState(null, null, location.href);
+        window.addEventListener("popstate", function () {
+          history.pushState(null, null, location.href);
+        });
+      });
+    </script>
+  </body>
+</html>
